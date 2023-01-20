@@ -3,6 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
 from django.urls import reverse, reverse_lazy
 from login_app.forms import UserRegisterForm
+from django.contrib.auth.views import LogoutView
 
 # Create your views here.
 
@@ -33,16 +34,25 @@ def login_view(request):
 
 def user_register(request):
     if request.method == "POST":
-        formulario = UserRegisterForm(request.POST)
+        form = UserRegisterForm(request.POST)
 
-        if formulario.is_valid():
-            formulario.save()  # Esto lo puedo usar porque es un model form
+        if form.is_valid():
+            form.save()  # Esto lo puedo usar porque es un model form
             success_url = reverse('inicio')
             return redirect(success_url)
     else:  # GET
-        formulario = UserRegisterForm()
+        form = UserRegisterForm()
     return render(
         request=request,
-        template_name='estudiantes/registro.html',
-        context={'form': formulario},
+        template_name='register.html',
+        context={'form': form},
     )
+
+def home(request):
+    return render(
+        request=request,
+        template_name='panel.html',
+    )
+
+class CustomLogoutView(LogoutView):
+    template_name = 'logout.html'
